@@ -111,6 +111,12 @@ static unsigned int screen_off_max_freq = 0;
 static unsigned int max_freq_cap = 0;
 #endif
 
+#ifdef CONFIG_CUSTOM_VOLTAGE
+extern void customvoltage_register_freqtable(struct cpufreq_frequency_table * freq_table);
+extern void customvoltage_register_freqmutex(struct mutex * freq_mutex);
+extern void customvoltage_init(void);
+#endif
+
 static unsigned int omap_getspeed(unsigned int cpu)
 {
 	unsigned long rate;
@@ -522,6 +528,12 @@ static int __cpuinit omap_cpu_init(struct cpufreq_policy *policy)
 	/* FIXME: what's the actual transition time? */
 	policy->cpuinfo.transition_latency = 30 * 1000;
 
+#ifdef CONFIG_CUSTOM_VOLTAGE
+	customvoltage_register_freqtable(freq_table);
+	customvoltage_register_freqmutex(&omap_cpufreq_lock);
+	customvoltage_init();
+#endif
+
 	return 0;
 
 fail_table:
@@ -762,8 +774,35 @@ static struct freq_attr omap_cpufreq_attr_iva_freq_oc = {
 
 #endif // CONFIG_OMAP4430_IVA_OVERCLOCK
 
+#ifdef CONFIG_CUSTOM_VOLTAGE
+
+extern ssize_t customvoltage_voltages_read(struct device * dev, struct device_attribute * attr, char * buf);
+extern ssize_t customvoltage_voltages_write(struct device * dev, struct device_attribute * attr, const char * buf, size_t size);
+
+static ssize_t show_UV_mV_table(struct cpufreq_policy * policy, char * buf)
+{
+    return customvoltage_voltages_read(NULL, NULL, buf);
+}
+
+static ssize_t store_UV_mV_table(struct cpufreq_policy * policy, const char * buf, size_t count)
+{
+    return customvoltage_voltages_write(NULL, NULL, buf, count);
+}
+
+static struct freq_attr omap_UV_mV_table = {
+    .attr = {.name = "UV_mV_table",
+	     .mode=0644,
+    },
+    .show = show_UV_mV_table,
+    .store = store_UV_mV_table,
+};
+#endif
+
 static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
+#ifdef CONFIG_CUSTOM_VOLTAGE
+	&omap_UV_mV_table,
+#endif
 #ifdef CONFIG_OMAP4430_GPU_OVERCLOCK
 	&omap_cpufreq_attr_gpu_max_freq,
 #endif
