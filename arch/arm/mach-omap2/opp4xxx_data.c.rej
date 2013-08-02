@@ -1,0 +1,31 @@
+diff a/arch/arm/mach-omap2/opp4xxx_data.c b/arch/arm/mach-omap2/opp4xxx_data.c	(rejected hunks)
+@@ -177,13 +212,16 @@ static struct omap_opp_def __initdata omap443x_opp_def_list[] = {
+ 	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 800000000, OMAP4430_VDD_MPU_OPPTURBO_UV),
+ 	/* MPU OPP4 - OPP-NT */
+ 	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1008000000, OMAP4430_VDD_MPU_OPPNITRO_UV),
+-#if defined(CONFIG_MACH_LGE_CX2) //##hwcho20120518 1.2Ghz Àû¿ë.
++#if defined(CONFIG_MACH_LGE_CX2) || defined(CONFIG_OMAP4430_CPU_OVERCLOCK)
+ 	/* MPU OPP5 - OPP-SB */
+ 	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1200000000, OMAP4430_VDD_MPU_OPPNITROSB_UV),
+ #else
+ 	/* MPU OPP5 - OPP-SB */
+ 	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", false, 1200000000, OMAP4430_VDD_MPU_OPPNITROSB_UV),
+ #endif //##	
++#ifdef CONFIG_OMAP4430_CPU_OVERCLOCK
++	OPP_INITIALIZER("mpu", "dpll_mpu_ck", "mpu", true, 1350000000, OMAP4430_VDD_MPU_OPPNITROSB2_UV),
++#endif
+ 	/* L3 OPP1 - OPP50 */
+ 	OPP_INITIALIZER("l3_main_1", "virt_l3_ck", "core", true, 100000000, OMAP4430_VDD_CORE_OPP50_UV),
+ 	/* L3 OPP2 - OPP100, OPP-Turbo, OPP-SB */
+@@ -697,6 +738,11 @@ int __init omap4_opp_init(void)
+ 	if (omap4_has_iva_500mhz())
+ 		omap4_opp_enable("iva", 500000000);
+ 
++
++#ifdef CONFIG_OMAP4430_CPU_OVERCLOCK
++	omap4_opp_enable("mpu", 1200000000);	
++	omap4_opp_enable("mpu", 1350000000);	
++#else
+ 	/* Enable Nitro and NitroSB MPU OPPs */
+ 	if (omap4_has_mpu_1_2ghz())
+ 		omap4_opp_enable("mpu", 1200000000);
