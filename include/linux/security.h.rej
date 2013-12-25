@@ -1,0 +1,9 @@
+diff a/include/linux/security.h b/include/linux/security.h	(rejected hunks)
+@@ -36,6 +36,7 @@
+ #include <linux/key.h>
+ #include <linux/xfrm.h>
+ #include <linux/slab.h>
++#include <linux/xattr.h>
+ #include <net/flow.h>
+ 
+ /* Maximum number of letters for an LSM name string */
