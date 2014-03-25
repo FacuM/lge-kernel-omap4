@@ -1,0 +1,22 @@
+diff a/drivers/video/omap2/displays/panel-hx8389.c b/drivers/video/omap2/displays/panel-hx8389.c	(rejected hunks)
+@@ -850,7 +873,9 @@ static ssize_t display_init_code_store(struct device *dev,
+ }
+ 
+ static DEVICE_ATTR(init_code, 0660, display_init_code_show, display_init_code_store);
+-
++#ifdef CONFIG_HX8389_NATURE
++static DEVICE_ATTR(nature, 0660, nature_show, nature_store);
++#endif
+ static DEVICE_ATTR(gamma_tuning, 0660, display_gamma_tuning_show, display_gamma_tuning_store);
+ //LGE_CHANGE_E [jeonghoon.cho@lge.com] 2012-0208, P940 : Add sysfile for gamma tuning + at%kcal jeonghoon.cho@lge.com
+ static ssize_t display_porch_value_store(struct device *dev, struct device_attribute *attr, const char *buf, size_t size)
+@@ -1085,6 +1110,9 @@ static struct attribute *hx8389_panel_attrs[] = {
+ 	&dev_attr_ulps_timeout.attr,
+ //LGE_CHANGE_S [jeonghoon.cho@lge.com] 2012-0208, P940 : Add sysfile for gamma tuning + at%kcal jeonghoon.cho@lge.com
+     &dev_attr_gamma_tuning.attr,
++#ifdef CONFIG_HX8389_NATURE
++	&dev_attr_nature.attr,
++#endif
+ #if defined(CONFIG_LUT_FILE_TUNING)
+     &dev_attr_file_tuning.attr,
+ #endif

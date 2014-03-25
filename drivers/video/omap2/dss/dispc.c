@@ -7,6 +7,8 @@
  * Some code and ideas taken from drivers/video/omap/ driver
  * by Imre Deak.
  *
+ * Nature mode code by Artur Zaleski <artas182x@gmail.com>
+ *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License version 2 as published by
  * the Free Software Foundation.
@@ -3217,9 +3219,15 @@ int dispc_enable_gamma(enum omap_channel ch, u8 gamma)
 //                                                                   
 //                                                                                          
 
-//                                                                                          
+//  
+
+int c,z,n;
+                                                                                        
 int dispc_set_gamma_rgb(enum omap_channel ch, u8 gamma,int red,int green,int blue)
 {
+c = red;
+z = green;
+n = blue;
 #ifdef CONFIG_ARCH_OMAP4
 	u32 i, temp, channel;
 	static int enabled;
@@ -3397,7 +3405,40 @@ void dispc_set_gamma_table()
 					GammaTable[i]=GammaTable_HITACHI[i];
 		}
 }
-//                                                                                          
+
+/*Nature mode*/
+
+
+#ifdef CONFIG_HX8389_NATURE
+int dispc_set_nature(int enbl)
+{
+int j;
+
+if (enbl==0)
+{
+for(j=0;j<GAMMA_TBL_SZ;j++)
+{
+				GammaTable_p760[j] = GammaTable_p760amoled[j];
+				GammaTable[j]=GammaTable_p760[j];
+}
+dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD, 0,c,z,n);
+dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD2, 0,c,z,n);
+}
+if (enbl==1)
+{
+for(j=0;j<GAMMA_TBL_SZ;j++)
+{
+				GammaTable_p760[j] = GammaTable_p760nature[j];
+				GammaTable[j]=GammaTable_p760[j];
+}
+dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD, 0,c,z,n);
+dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD2, 0,c,z,n);
+
+}
+
+}
+#endif
+                                                                                         
 void dispc_set_tft_data_lines(enum omap_channel channel, u8 data_lines)
 {
 	int code;

@@ -384,6 +384,7 @@ static ssize_t manager_cpr_coef_store(struct omap_overlay_manager *mgr,
 	return size;
 }
 
+
 #ifdef CONFIG_LGE_BROADCAST_TDMB
 static ssize_t manager_dmb_coefs_show(struct omap_overlay_manager *mgr, char *buf)
 {
