@@ -1,6 +1,0 @@
-diff a/arch/arm/configs/cyanogenmod_p760_defconfig b/arch/arm/configs/cyanogenmod_p760_defconfig	(rejected hunks)
-@@ -3268,3 +3268,4 @@ CONFIG_ZSWAP=y
- CONFIG_ZBUD=y
- CONFIG_F2FS_FS=y
- CONFIG_ZSMALLOC=y
-+CONFIG_HX8389_NATURE=y

@@ -345,7 +345,7 @@ static int u2_batt_table[] = {
 };
 
 static struct twl4030_bci_platform_data u2_bci_data = {
-	.monitoring_interval = 10,
+	.monitoring_interval = 100,
 	.max_charger_currentmA = 1500,
 	.max_charger_voltagemV = 4560,
 	.max_bat_voltagemV = 4200,

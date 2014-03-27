@@ -53,10 +53,6 @@
 #ifndef  __DEBUG_POWER
 #define __DEBUG_POWER
 
-#define __DEBUG_PMIC
-#define __DEBUG_CHARGER
-#define __DEBUG_FUELGAUGE
-#define __DEBUG_MUIC
 //#define __DEBUG_TEMP
 
 #ifdef __DEBUG_PMIC 
