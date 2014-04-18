@@ -270,12 +270,12 @@ static struct omap_dss_device hitachi_u2_p760_device =
 		},
 
 		.dsi = {
-			.regn		= 18,  /* Fint = 1.92 MHz */
-			.regm		= 216,	/* CLKIN4DDR = 768.0 MHz */
-			.regm_dispc	= 4,  /* PLL2_CLK1 = 153.6 MHz */
-			.regm_dsi	= 6,  /* PLL2_CLK2 = 109.7 MHz */
+			.regn		= 16,  /* Fint = 1.92 MHz */
+			.regm		= 100,	/* CLKIN4DDR = 768.0 MHz */
+			.regm_dispc	= 5,  /* PLL2_CLK1 = 153.6 MHz */
+			.regm_dsi	= 5,  /* PLL2_CLK2 = 109.7 MHz */
 
-			.lp_clk_div = 12,	/* LP Clock */
+			.lp_clk_div = 10,	/* LP Clock */
 			.dsi_fclk_src	= OMAP_DSS_CLK_SRC_DSI2_PLL_HSDIV_DSI,
 		},
 	},

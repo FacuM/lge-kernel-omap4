@@ -603,51 +603,6 @@ static struct freq_attr omap_cpufreq_attr_gpu_max_freq = {
 };
 #endif // CONFIG_OMAP4430_GPU_OVERCLOCK
 
-#ifdef CONFIG_OMAP4430_CPU_OVERCLOCK
-/*
- * OMAP4 MPU voltage control via cpufreq by Michael Huang (coolbho3k)
- *
- * Note: Each opp needs to have a discrete entry in both volt data and
- * dependent volt data (in opp4xxx_data.c), or voltage control breaks. Make a
- * new voltage entry for each opp. Keep this in mind when adding extra
- * frequencies.
- */
-
-/* struct opp is defined elsewhere, but not in any accessible header files */
-
-struct opp {
-        struct list_head node;
-
-        bool available;
-        unsigned long rate;
-        unsigned long u_volt;
-
-        struct device_opp *dev_opp;
-};
-
-static ssize_t show_uv_mv_table(struct cpufreq_policy *policy, char *buf)
-{
-	int i = 0;
-	unsigned long volt_cur;
-	char *out = buf;
-	struct opp *opp_cur;
-
-	/* Reverse order sysfs entries for consistency */
-	while(freq_table[i].frequency != CPUFREQ_TABLE_END)
-                i++;
-
-	/* For each entry in the cpufreq table, print the voltage */
-	for(i--; i >= 0; i--) {
-		if(freq_table[i].frequency != CPUFREQ_ENTRY_INVALID) {
-			/* Find the opp for this frequency */
-			opp_cur = opp_find_freq_exact(mpu_dev, freq_table[i].frequency*1000, true);
-			/* sprint the voltage (mV)/frequency (MHz) pairs */
-			volt_cur = opp_cur->u_volt;
-			out += sprintf(out, "%umhz: %lu mV\n", freq_table[i].frequency/1000, volt_cur/1000);
-		}
-	}
-        return out-buf;
-}
 
 static void omap_cpu_early_suspend(struct early_suspend *h)
 {
@@ -743,95 +698,6 @@ struct freq_attr omap_cpufreq_attr_screen_off_freq = {
 
 #endif //ENABLE_SLEEP_MAX_FREQUENCY
 
-static ssize_t store_uv_mv_table(struct cpufreq_policy *policy,	const char *buf, size_t count)
-{
-	int i = 0;
-	unsigned long volt_cur, volt_old;
-	int ret;
-	char size_cur[16];
-	struct opp *opp_cur;
-	struct voltagedomain *mpu_voltdm;
-	mpu_voltdm = voltdm_lookup("mpu");
-
-	mutex_lock(&omap_cpufreq_lock);
-
-	while(freq_table[i].frequency != CPUFREQ_TABLE_END)
-		i++;
-
-	omap_sr_disable_reset_volt(mpu_voltdm);
-
-	for(i--; i >= 0; i--) {
-		if(freq_table[i].frequency != CPUFREQ_ENTRY_INVALID) {
-			
-			ret = sscanf(buf, "%lu", &volt_cur);
-			
-			if(ret != 1) {
-				count = -EINVAL; 
-				goto lbl_exit;
-			}
-
-			/* alter voltage opp */
-			opp_cur = opp_find_freq_exact(mpu_dev, freq_table[i].frequency*1000, true);
-
-			opp_cur->u_volt = volt_cur * 1000;
-
-			/* limit mpu voltage to min core voltage to prevent DVFS stalls */
-			switch ( mpu_voltdm->vdd->dep_vdd_info->dep_table[i].dep_vdd_volt ) {
-				case OMAP4430_VDD_CORE_OPP50_UV:
-					if ( opp_cur->u_volt < OMAP4430_VDD_CORE_OPP50_UV ) opp_cur->u_volt = OMAP4430_VDD_CORE_OPP50_UV;
-					break;
-				case OMAP4430_VDD_CORE_OPP100_UV: 
-					if ( opp_cur->u_volt < OMAP4430_VDD_CORE_OPP100_UV ) opp_cur->u_volt = OMAP4430_VDD_CORE_OPP100_UV;
-					break;
-				case OMAP4430_VDD_CORE_OPP100_OV_UV:
-					if ( opp_cur->u_volt < OMAP4430_VDD_CORE_OPP100_OV_UV ) opp_cur->u_volt = OMAP4430_VDD_CORE_OPP100_OV_UV;
-					break;
-				default:
-					pr_err("cpu uv/mv core dependent volt => %u\n", mpu_voltdm->vdd->dep_vdd_info->dep_table[i].dep_vdd_volt);
-					pr_err("freq: %d, bad voltage value %lu, bailing\n", freq_table[i].frequency, opp_cur->u_volt);
-					goto lbl_exit;
-			}
-
-
-			/* alter voltage domains */
-			volt_old = mpu_voltdm->vdd->volt_data[i].volt_nominal;
-			/* change our main and dependent voltage tables */
-			mpu_voltdm->vdd->volt_data[i].volt_nominal = opp_cur->u_volt;
-			mpu_voltdm->vdd->dep_vdd_info->dep_table[i].main_vdd_volt = opp_cur->u_volt;
-
-			/* alter current voltage in voltdm, if appropriate */
-			if ( volt_old == mpu_voltdm->curr_volt->volt_nominal )
-				mpu_voltdm->curr_volt->volt_nominal = opp_cur->u_volt;
-
-			/* reset calibrated value */
-			mpu_voltdm->vdd->volt_data[i].volt_calibrated = 0;
-
-			/* Non-standard sysfs interface: advance buf */
-			ret = sscanf(buf, "%s", size_cur);
-			buf += (strlen(size_cur)+1);
-
-			pr_info("cpu uv/mv changed: freq: %d, volt_cur: %lu\n", freq_table[i].frequency, opp_cur->u_volt );
-		}
-		else {
-			pr_err("%s: frequency entry invalid for %u\n", __func__, freq_table[i].frequency);
-		}
-	}
-
-lbl_exit:
-	omap_sr_enable(mpu_voltdm, omap_voltage_get_curr_vdata(mpu_voltdm));
-
-	mutex_unlock(&omap_cpufreq_lock);
-
-	return count;
-}
-
-static struct freq_attr omap_uv_mv_table = {
-	.attr = {.name = "UV_mV_table", .mode=0644,},
-	.show = show_uv_mv_table,
-	.store = store_uv_mv_table,
-};
-
-#endif // CONFIG_OMAP4430_CPU_OVERCLOCK
 
 #ifdef CONFIG_OMAP4430_IVA_OVERCLOCK
 
@@ -900,9 +766,6 @@ static struct freq_attr *omap_cpufreq_attr[] = {
 	&cpufreq_freq_attr_scaling_available_freqs,
 #ifdef CONFIG_OMAP4430_GPU_OVERCLOCK
 	&omap_cpufreq_attr_gpu_max_freq,
-#endif
-#ifdef CONFIG_OMAP4430_CPU_OVERCLOCK
-	&omap_uv_mv_table,
 #endif
 #ifdef CONFIG_OMAP4430_IVA_OVERCLOCK
 	&omap_cpufreq_attr_iva_freq_oc,
