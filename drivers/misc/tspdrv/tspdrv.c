@@ -305,7 +305,7 @@ static ssize_t write(struct file *file, const char *buf, size_t count, loff_t *p
 	return count;
 }
 
-#define DEFAULT_TIMED_STRENGTH 120
+#define DEFAULT_TIMED_STRENGTH 110
 static VibeInt8 nForce[1] = {DEFAULT_TIMED_STRENGTH};
 
 static ssize_t nforce_val_show(struct device *dev, struct device_attribute *attr,

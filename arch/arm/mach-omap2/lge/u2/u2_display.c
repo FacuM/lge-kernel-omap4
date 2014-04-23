@@ -271,7 +271,7 @@ static struct omap_dss_device hitachi_u2_p760_device =
 
 		.dsi = {
 			.regn		= 16,  /* Fint = 1.92 MHz */
-			.regm		= 165,	/* CLKIN4DDR = 768.0 MHz */
+			.regm		= 140,	/* CLKIN4DDR = 768.0 MHz */
 			.regm_dispc	= 4,  /* PLL2_CLK1 = 153.6 MHz */
 			.regm_dsi	= 5,  /* PLL2_CLK2 = 109.7 MHz */
 

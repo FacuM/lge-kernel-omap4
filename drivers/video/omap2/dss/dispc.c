@@ -3421,7 +3421,7 @@ for(j=0;j<GAMMA_TBL_SZ;j++)
 				GammaTable_p760[j] = GammaTable_p760amoled[j];
 				GammaTable[j]=GammaTable_p760[j];
 }
-dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD, 0,c,z,n);
+//dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD, 0,c,z,n);
 dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD2, 0,c,z,n);
 }
 if (enbl==1)
@@ -3431,7 +3431,7 @@ for(j=0;j<GAMMA_TBL_SZ;j++)
 				GammaTable_p760[j] = GammaTable_p760nature[j];
 				GammaTable[j]=GammaTable_p760[j];
 }
-dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD, 0,c,z,n);
+//dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD, 0,c,z,n);
 dispc_set_gamma_rgb(OMAP_DSS_CHANNEL_LCD2, 0,c,z,n);
 
 }

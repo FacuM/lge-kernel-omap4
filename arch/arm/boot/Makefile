@@ -10,6 +10,7 @@
 #
 # Copyright (C) 1995-2002 Russell King
 #
+plus_sec := $(call as-instr,.arch_extension sec,+sec)
 
 MKIMAGE         := $(srctree)/scripts/mkuboot.sh
 

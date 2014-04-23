@@ -485,6 +485,12 @@ config OMAP_RAM_CONSOLE
           invocation, by accessing /proc/last_kmsg
           NOTE: Board file needs to invoke relevant api to enable the support
 
+config OMAP_REGULATOR_VOLTCHANGE
+	bool "Allow voltage changes for regulators"
+	default n
+	help
+	  Allow voltage changes for regulators.
+
 
 config OMAP4_PPA_CPU1_ONLINE_BUG
 	bool "Enable Support for CPU1 ONLINE WA for OSWR/OFF"
