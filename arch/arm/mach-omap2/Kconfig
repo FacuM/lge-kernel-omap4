@@ -185,6 +185,10 @@ config MACH_OMAP3EVM
 	default y
 	select OMAP_PACKAGE_CBB
 
+config DEVKERNEL
+       bool "Fix for kernels builded outside rom"
+       default n
+
 ## LGE_SJIT_S 2011-08-25 [choongryeol.lee@lge.com]
 config WIFI_CONTROL_FUNC
         bool "Enable WiFi control function abstraction"
