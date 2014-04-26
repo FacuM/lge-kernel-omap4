@@ -141,9 +141,9 @@ static struct panel_config panel_configs[] = {
 			.vfp = 12,
 			.vsw = 4,
 			.vbp = 8,
-			.hfp = 20, //20
-			.hsw =10,
-			.hbp = 47, // 47
+			.hfp = 4, //20
+			.hsw = 2,
+			.hbp = 22, // 47
 		},
 		.sleep		= {
 			.sleep_in	= 20,
