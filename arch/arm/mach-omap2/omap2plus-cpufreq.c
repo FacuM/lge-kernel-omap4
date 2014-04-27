@@ -87,12 +87,7 @@ static int gpu_freq_idx = DEFAULT_MAX_GPU_FREQUENCY_INDEX;
 #include "smartreflex.h"
 
 #define OMAP4430_CPU_DEFAULT_MIN_FREQUENCY	200000
-#define OMAP4430_CPU_DEFAULT_MAX_FREQUENCY	950000
-
-// [antsvx] these shoudl match same in opp4xxx_data.c
-#define OMAP4430_VDD_CORE_OPP50_UV		962000
-#define OMAP4430_VDD_CORE_OPP100_UV		1127000
-#define OMAP4430_VDD_CORE_OPP100_OV_UV		1250000
+#define OMAP4430_CPU_DEFAULT_MAX_FREQUENCY	930000
 
 #endif
 
