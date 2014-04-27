@@ -2561,8 +2561,6 @@ int dispc_setup_plane(enum omap_plane plane,
 	_dispc_set_pre_mult_alpha(plane, pre_mult_alpha);
 	_dispc_setup_global_alpha(plane, global_alpha);
 
-	unsigned ovl_fifo_size;
-
 	if (cpu_is_omap44xx()) {
 		/* optimization of power consumption for OMAP4 */
 		fifo_low = (ovl_fifo_size / 2);
